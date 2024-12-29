@@ -26,8 +26,3 @@ This folder contains code and resources related to HTTP, authentication, and JSO
 
 ## References
 See `links.txt` for helpful resources and documentation links.
-
----
-
-*This folder is part of a larger curriculum on backend development and authentication.*
-
