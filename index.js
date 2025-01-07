@@ -3,80 +3,81 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = "RIVU123";
 
-const app =express();
+const app = express();
 app.use(express.json());
 
 const users = [];
 
-app.get("/" , function(req,res){
+app.get("/", function (req, res) {
     res.sendFile(__dirname + "/public/index.html");
 })
 
-app.post("/signup",function(req,res){
+app.post("/signup", function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
     users.push({
-        username : username ,
-        password : password
+        username: username,
+        password: password
     })
 
     res.json({
-        message : "You are signed in "
+        message: "You are signed in "
     })
 
 })
 
-app.post("/signin", function(req,res){
-    const username = req.body.username ;
+app.post("/signin", function (req, res) {
+    const username = req.body.username;
     const password = req.body.password;
 
-    let foundUser = null ;
+    let foundUser = null;
 
-    for(let i = 0 ; i < users.length ; i++){
-        if(users[i].username === username && users[i]=== password){
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === username && users[i] === password) {
             foundUser = users[i]
         }
     }
-    if(foundUser){
+    if (foundUser) {
         res.json({
-            message : "Credentials are wrong!"
+            message: "Credentials are wrong!"
         })
-    }else{
+    } else {
         const token = jwt.sign({
             username
-        },JWT_SECRET)
+        }, JWT_SECRET)
         res.json({
-            token : token
+            token: token
         })
     }
 })
-function auth(req,res,next){
-    const token = req.headers.token ;
-    const decodedData = jwt.verify(token,JWT_SECRET);
-    if(decodedData.username){
+
+function auth(req, res, next) {
+    const token = req.headers.token;
+    const decodedData = jwt.verify(token, JWT_SECRET);
+    if (decodedData.username) {
         req.username = decodedData.username;
         next()
-    }else{
+    } else {
         res.json({
-            message : "Your are not logged in "
+            message: "Your are not logged in "
         })
     }
 }
 
-app.get("/me",auth,function(req,res){
+app.get("/me", auth, function (req, res) {
 
-        let foundUser = null ;
+    let foundUser = null;
 
-        for(let i = 0 ; i < users.length ; i++){
-            if(users[i].username === req.username ){
-                foundUser = users[i]
-            }
+    for (let i = 0; i < users.length; i++) {
+        if (users[i].username === req.username) {
+            foundUser = users[i]
         }
-        res.json({
-            username : foundUser.username,
-            password : foundUser.password
-        })
+    }
+    res.json({
+        username: foundUser.username,
+        password: foundUser.password
+    })
 
 })
 

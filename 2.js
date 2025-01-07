@@ -17,16 +17,16 @@ function generateToken() {
     return token;
 } /*a random token generator for each user signs up */
 
-app.post("/signup",function (req , res){
+app.post("/signup", function (req, res) {
     const username = req.body.username;
     const password = req.body.password;
 
     users.push({
-        username:username,
-        password:password
+        username: username,
+        password: password
     })
     res.json({
-        message : "You are signed up "
+        message: "You are signed up "
     })
 
     console.log(users)
@@ -58,7 +58,7 @@ app.get("/me", (req, res) => {
     if (user) {
         res.send({
             username: user.username,
-            password : user.password
+            password: user.password
         })
     } else {
         res.status(401).send({
