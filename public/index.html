@@ -1,0 +1,40 @@
+
+<html>
+<head>
+    <title>AUTH website</title>
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.7/axios.min.js"></script>
+<script>
+    async function signup() {
+        const username = document.getElementById("Signup_username").value;
+        const password = document.getElementById("Signup_password").value;
+        await axios.post("http://localhost:3000/signup", {
+            username: username,
+            password: password
+        });
+        alert("you are signed up");
+    }
+
+</script>
+<body>
+<div>
+    Signup
+    <input id="signup_username" name="username" placeholder="Username" type="text">
+    <input id="signup_password" name="password" placeholder="Password" type="password">
+    <button onclick="signup()">Submit</button>
+</div>
+<div>
+    Signin
+    <input name="username" placeholder="Username" type="text">
+    <input name="password" placeholder="Password" type="password">
+    <button onclick="signin()">Submit</button>
+</div>
+<div>
+    User information:
+    <div id="information"></div>
+</div>
+<div>
+    <button onclick="logout()">Logout</button>
+</div>
+</body>
+</html>
