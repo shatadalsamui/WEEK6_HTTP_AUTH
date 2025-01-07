@@ -1,7 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 
-const JWT_SECRET = "RIVU123";
+const JWT_SECRET = "RIVU1234";
 
 const app = express();
 app.use(express.json());
