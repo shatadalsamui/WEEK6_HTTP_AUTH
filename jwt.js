@@ -1,67 +1,69 @@
-const express = require("express"); /*import the express library*/
+const express = require("express"); // Import the Express framework for building web servers
 
-const jwt = require("jsonwebtoken"); /*import the jsonwebtoken library*/
+const jwt = require("jsonwebtoken"); // Import the jsonwebtoken library for JWT operations
 
-const app = express(); /*create an instance of the express library*/
+const app = express(); // Create an Express application instance
 
-const JWT_TOKEN = "USER_APP";
+const JWT_TOKEN = "USER_APP"; // Secret key used to sign and verify JWT tokens
 
-app.use(express.json());
-const users = [];
-app.post("/signup", function (req, res) {
-    const username = req.body.username;
-    const password = req.body.password;
+app.use(express.json()); // Middleware to parse incoming JSON request bodies
+const users = []; // In-memory array to store user objects (username & password)
 
-    users.push({
-        username: username,
-        password: password
+app.post("/signup", function (req, res) { // Route to handle user signup
+    const username = req.body.username; // Extract username from request body
+    const password = req.body.password; // Extract password from request body
+
+    users.push({ // Add new user to users array
+        username: username, // Store username
+        password: password  // Store password (plain text, not secure for production)
     })
     res.json({
-        message: "You are signed up "
+        message: "You are signed up " // Respond with signup confirmation
     })
-
-    console.log(users)
+    console.log(users) // Log current users array to console
 })
 
-app.post("/signin", (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
+app.post("/signin", (req, res) => { // Route to handle user signin
+    const username = req.body.username; // Extract username from request body
+    const password = req.body.password; // Extract password from request body
 
+    // Find user with matching username and password
     const user = users.find(user => user.username === username && user.password === password);
 
-    if (user) {
-        const token = jwt.sign({
+    if (user) { // If user exists
+        const token = jwt.sign({ // Create JWT token with username as payload
             username: user.username
-        }, JWT_TOKEN);
+        }, JWT_TOKEN); // Sign token with secret key
 
-        user.token = token;
+        user.token = token; // Optionally store token with user (not required for stateless JWT)
         res.send({
-            token
+            token // Respond with JWT token
         })
-        console.log(users);
+        console.log(users); // Log users array
     } else {
-        res.status(403).send({
+        res.status(403).send({ // If credentials invalid, send 403 Forbidden
             message: "Invalid username or password"
         })
     }
 });
 
+app.get("/me", (req, res) => { // Route to get current user info (protected route)
+    const token = req.headers.authorization; // Get JWT token from Authorization header
+    const userDetails = jwt.verify(token, JWT_TOKEN); // Verify token and decode payload
 
-app.get("/me", (req, res) => {
-    const token = req.headers.authorization;
-    const userDetails = jwt.verify(token, JWT_TOKEN);
-
-    const username = userDetails.username;
+    const username = userDetails.username; // Extract username from token payload
+    // Find user in users array by username
     const user = users.find(user => user.username === username);
 
-    if (user) {
+    if (user) { // If user exists
         res.send({
-            username: user.username
+            username: user.username // Respond with username
         })
     } else {
-        res.status(401).send({
+        res.status(401).send({ // If user not found, send 401 Unauthorized
             message: "Unauthorized"
         })
     }
 })
-app.listen(3000);// the http server is listening on port 3000
+
+app.listen(3000); // Start the HTTP server on port 3000
